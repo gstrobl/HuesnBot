@@ -4,7 +4,7 @@ require('dotenv').config();
 
 class Bot {
   constructor() {
-      this.telegramBot = new Telegraf(process.env.BOT_TOKEN);
+    this.telegramBot = new Telegraf(process.env.BOT_TOKEN);
   }
 
   init() {
