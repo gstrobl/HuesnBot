@@ -8,7 +8,7 @@ class Bot {
   }
 
   init() {
-    this.telegramBot.telegram.setChatPhoto();
+    // this.telegramBot.telegram.setChatPhoto();
     this.telegramBot.telegram.deleteWebhook().then((success) => {
       if (success) {
         console.log('🤖 is listening to your commands');

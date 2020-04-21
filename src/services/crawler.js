@@ -53,8 +53,8 @@ const crawler = {
 
           return pageContent;
         });
-        console.log('page', pageContent.length);
-        console.log('mar', markets.length);
+        // console.log('page', pageContent.length);
+        // console.log('mar', markets.length);
 
         const output = [];
         pageContent.filter((item) => {
@@ -73,6 +73,7 @@ const crawler = {
           index += 1;
           return null;
         });
+
         if (output) {
           addBeerList({ data: output, docName: 'priceList' });
         }
