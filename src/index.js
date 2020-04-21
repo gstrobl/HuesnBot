@@ -1,6 +1,9 @@
 import express from 'express';
 // import Bot from 'services/bot';
 import crawler from 'services/crawler';
+
+const PORT = process.env.PORT || 3000;
+
 // import { addBeerList, getRecord } from 'controllers/beers';
 
 // const bot = new Bot();
@@ -36,6 +39,6 @@ app.get('/crawler/:type', crawler.fetchData);
 app.get('/', (req, res) => res.send('Hello World!'));
 // Set the bot API endpoint
 // app.use(bot.webhookCallback('/secret-path'));
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log('Example app listening on port 3000!');
 });

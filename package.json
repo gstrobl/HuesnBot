@@ -11,6 +11,9 @@
     "dev": "nodemon --inspect src/index.js --exec babel-node",
     "build": "webpack --mode production"
   },
+  "engines": {
+    "node": "12.11.1"
+  },
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "dotenv": "^8.2.0",
