@@ -1,4 +1,6 @@
 import Telegraf from 'telegraf';
+import { getBeerList } from 'controllers/beers';
+import dayjs from 'dayjs';
 
 require('dotenv').config();
 
@@ -8,9 +10,9 @@ class Bot {
   }
 
   init() {
-    // this.telegramBot.telegram.setChatPhoto();
-    this.telegramBot.telegram.deleteWebhook().then((success) => {
+    this.telegramBot.telegram.deleteWebhook().then(async (success) => {
       if (success) {
+        // eslint-disable-next-line no-console
         console.log('🤖 is listening to your commands');
       }
       this.telegramBot.startPolling();
@@ -23,7 +25,18 @@ class Bot {
 
     this.telegramBot.command('bier', async (ctx) => {
       const name = ctx.from.first_name;
-      ctx.reply(`Servus ${name || 'Hawara'}! Bald schick ich dir die günstigsten Angebote!`);
+      const data = await getBeerList('priceList');
+
+      const message = data.map((item) => {
+        const formatMessage = `🍺 ${item.name} 💵 EUR ${item.lowPrice} 🏪 ${
+          item.supermarket
+        } 📅 gültig bis: ${dayjs(item.priceValidUntil).format('DD.MM')} \n\n`;
+        return formatMessage;
+      });
+
+      ctx.reply(
+        `Servus ${name || 'Hawara'}! Hier hast die derzeitigen Angebote: \n ${message.join(' ')}`,
+      );
     });
   }
 }

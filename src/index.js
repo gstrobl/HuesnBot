@@ -12,11 +12,11 @@ app.get('/crawler/:type', crawler.fetchData);
 
 bot.init();
 app.use(bot.telegramBot.webhookCallback('/secret-path'));
+
 bot.telegramBot.telegram.setWebhook('https://huesnbot.herokuapp.com/secret-path');
-// bot.telegramBot.telegram.setWebhook('https://----.localtunnel.me/secret-path');
+
 app.get('/', (req, res) => res.send('Hello World!'));
-// Set the bot API endpoint
-// app.use(bot.webhookCallback('/secret-path'));
+
 app.listen(PORT, () => {
-  console.log('Example app listening on port 3000!');
+  console.log(`HuesnBot listening on port ${PORT}!`);
 });
