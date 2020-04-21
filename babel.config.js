@@ -2,7 +2,17 @@
 module.exports = function (api) {
   api.cache.forever();
 
-  const presets = ['@babel/preset-env'];
+  const presets = [
+    [
+      '@babel/preset-env',
+      {
+        targets: {
+          esmodules: true,
+          node: '12.13.0',
+        },
+      },
+    ],
+  ];
   const plugins = [
     '@babel/plugin-syntax-dynamic-import',
     // ['@babel/plugin-proposal-decorators', { legacy: true }],

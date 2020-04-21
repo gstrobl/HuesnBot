@@ -1,6 +1,6 @@
 import express from 'express';
 // import Bot from 'services/bot';
-// import crawler from 'services/crawler';
+import crawler from 'services/crawler';
 // import { addBeerList, getRecord } from 'controllers/beers';
 
 // const bot = new Bot();
@@ -30,7 +30,7 @@ const app = express();
 //   console.log('HTTP Get Request');
 // });
 
-// app.get('/crawler', crawler.createEvents);
+app.get('/crawler/:type', crawler.fetchData);
 // bot.init();
 // bot.telegramBot.telegram.setWebhook('https://----.localtunnel.me/secret-path');
 app.get('/', (req, res) => res.send('Hello World!'));
