@@ -9,9 +9,31 @@ const crawler = {
   fetchData(req, res) {
     if (req.params.type && req.query.secret === process.env.CRONJOB_SECRET) {
       (async () => {
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+          args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        });
+
         const page = await browser.newPage();
-        await page.goto(`${mainUrl}${req.params.type}`);
+
+        await page.setRequestInterception(true);
+
+        page.on('request', (request) => {
+          const whitelist = ['document', 'script', 'xhr', 'fetch', 'stylesheet'];
+          if (!whitelist.includes(request.resourceType())) {
+            return request.abort();
+          }
+          return request.continue();
+        });
+
+        const response = await page.goto(`${mainUrl}${req.params.type}`, {
+          waitUntil: 'networkidle0',
+        });
+
+        const status = response.status();
+
+        if ((status < 200 || status > 300) && status !== 304 && status !== 404) {
+          return null;
+        }
 
         const html = await page.evaluate(() => document.body.innerHTML);
 
