@@ -20,10 +20,10 @@ class Bot {
 
     this.telegramBot.start(async (ctx) => {
       const name = ctx.from.first_name;
-      ctx.reply(`Ahoi ${name || 'friend'}! You managed to run me!`);
+      ctx.reply(`Ahoi ${name || 'Hawara'}! Frag mich wo es das günstigste Bier gibt!`);
     });
 
-    this.telegramBot.hears('bier', async (ctx) => {
+    this.telegramBot.hears(/.*(b|B)ier/, async (ctx) => {
       const name = ctx.from.first_name;
       const data = await getBeers();
 
@@ -50,6 +50,11 @@ class Bot {
         )}`,
       );
       return null;
+    });
+
+    this.telegramBot.hears(/.*(d|D)anke/, async (ctx) => {
+      const name = ctx.from.first_name;
+      ctx.reply(`Lass es dir schmecken ${name || 'Hawara'}! 🍺`);
     });
   }
 }
