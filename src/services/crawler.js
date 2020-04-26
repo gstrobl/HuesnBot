@@ -1,13 +1,13 @@
 import puppeteer from 'puppeteer';
 import $ from 'cheerio';
-import { addBeerList } from 'controllers/beers';
+import { addBeers } from 'controllers/beers';
 
 const mainUrl = 'https://www.aktionsfinder.at/suche/?q=';
 const supermarkets = ['Merkur', 'Billa', 'Adeg', 'Spar', 'Interspar', 'Penny', 'Unimarkt'];
 
 const crawler = {
   fetchData(req, res) {
-    if (req.params.type && req.query.secret === process.env.CRONJOB_SECRET) {
+    if (req) {
       (async () => {
         const browser = await puppeteer.launch({
           args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -53,32 +53,13 @@ const crawler = {
 
           return pageContent;
         });
-        // console.log('page', pageContent.length);
-        // console.log('mar', markets.length);
+        console.log('markets', markets);
 
-        const output = [];
-        pageContent.filter((item) => {
-          let index = 1;
-          const data = JSON.parse(item);
-
-          if (/Kiste/.test(data.name)) {
-            output.push({
-              name: data.name,
-              lowPrice: data.offers.lowPrice,
-              highPrice: data.offers.highPrice,
-              priceValidUntil: data.offers.priceValidUntil,
-              supermarket: markets[index],
-            });
-          }
-          index += 1;
-          return null;
-        });
-
-        if (output) {
-          addBeerList({ data: output, docName: 'priceList' });
+        if (pageContent) {
+          addBeers({ pageContent, groceryStores: markets, brand: req.params.type });
         }
 
-        return res.status(200).send(output);
+        return res.status(200).send(pageContent);
       })();
     }
   },

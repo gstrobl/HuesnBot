@@ -1,5 +1,5 @@
 import Telegraf from 'telegraf';
-import { getBeerList } from 'controllers/beers';
+import { getBeers } from 'controllers/beers';
 import dayjs from 'dayjs';
 
 require('dotenv').config();
@@ -23,20 +23,33 @@ class Bot {
       ctx.reply(`Ahoi ${name || 'friend'}! You managed to run me!`);
     });
 
-    this.telegramBot.command('bier', async (ctx) => {
+    this.telegramBot.hears('bier', async (ctx) => {
       const name = ctx.from.first_name;
-      const data = await getBeerList('priceList');
+      const data = await getBeers();
+
+      if (!data) {
+        ctx.reply(`Servus ${name || 'Hawara'}! Derzeit gibt es keine Angebote 🤨`);
+        return null;
+      }
+      const checkType = (type) => {
+        return type === 'can' ? 'Dose' : 'Flasche';
+      };
 
       const message = data.map((item) => {
-        const formatMessage = `🍺 ${item.name} 💵 EUR ${item.lowPrice} 🏪 ${
-          item.supermarket
-        } 📅 gültig bis: ${dayjs(item.priceValidUntil).format('DD.MM')} \n\n`;
+        const formatMessage = `🍺 ${item.shortName} / ${item.productMeasure} / ${checkType(
+          item.type,
+        )} 💵 EUR ${item.lowPricePerItem} 🏪 ${item.supermarket} 📅 gültig bis: ${dayjs(
+          item.priceValidUntil.seconds * 1000,
+        ).format('DD.MM.YYYY')} \n\n`;
         return formatMessage;
       });
 
       ctx.reply(
-        `Servus ${name || 'Hawara'}! Hier hast die derzeitigen Angebote: \n ${message.join(' ')}`,
+        `Servus ${name || 'Hawara'}! Hier hast du die derzeitigen Angebote: \n ${message.join(
+          ' ',
+        )}`,
       );
+      return null;
     });
   }
 }

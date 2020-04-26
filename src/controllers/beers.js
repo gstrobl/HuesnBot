@@ -1,24 +1,73 @@
 import { db } from 'controllers/config';
+import { classifyProduct, isEmpty } from 'utils/formatter';
 
-const addBeerList = ({ data, docName }) => {
-  const docRef = db.collection('beers').doc(docName);
-  docRef.set({ data });
+const addBeers = ({ pageContent, groceryStores, brand }) => {
+  const docRef = db.collection('beers');
+
+  let index = 0;
+  pageContent.map((item) => {
+    const data = JSON.parse(item);
+    let entry = {};
+    if (/.*(f|F)lasche$/.test(data.name)) {
+      entry = {
+        name: data.name,
+        supermarket: groceryStores[index],
+        type: 'bottle',
+        ...classifyProduct(data, brand),
+      };
+    }
+    if (/.*(d|D)ose$/.test(data.name)) {
+      entry = {
+        name: data.name,
+        supermarket: groceryStores[index],
+        type: 'can',
+        ...classifyProduct(data, brand),
+      };
+    }
+    index += 1;
+    if (!isEmpty(entry)) {
+      docRef.add(entry);
+    }
+    return null;
+  });
+  return { status: 200 };
 };
 
-const getBeerList = async (docName) => {
-  if (docName) {
-    const docRef = db.collection('beers').doc(docName);
-    const { data } = await docRef
-      .get()
-      .then((doc) => doc.data())
-      .catch((err) => {
-        console.log('Error getting document', err);
+const getBeers = async () => {
+  const docRef = db
+    .collection('beers')
+    .orderBy('priceValidUntil')
+    .where('priceValidUntil', '>=', new Date());
+
+  const data = await docRef
+    .get()
+    .then((snapshot) => {
+      if (snapshot.empty) {
+        console.log('No matching documents.');
+        return null;
+      }
+
+      const output = [];
+      snapshot.forEach((doc) => {
+        if (
+          !output.some(
+            (item) =>
+              item.shortName === doc.data().shortName &&
+              item.productMeasure === doc.data().productMeasure &&
+              item.supermarket === doc.data().supermarket,
+          )
+        ) {
+          output.push(doc.data());
+        }
       });
-    console.log('###', data);
 
-    return data;
-  }
-  return null;
+      return output;
+    })
+    .catch((err) => {
+      console.log('Error getting document', err);
+    });
+
+  return data;
 };
 
-export { getBeerList, addBeerList };
+export { addBeers, getBeers };
