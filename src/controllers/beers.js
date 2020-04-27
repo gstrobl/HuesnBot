@@ -43,6 +43,7 @@ const getBeers = async () => {
     .get()
     .then((snapshot) => {
       if (snapshot.empty) {
+        // eslint-disable-next-line no-console
         console.log('No matching documents.');
         return null;
       }

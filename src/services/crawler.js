@@ -53,7 +53,6 @@ const crawler = {
 
           return pageContent;
         });
-        console.log('markets', markets);
 
         if (pageContent) {
           addBeers({ pageContent, groceryStores: markets, brand: req.params.type });
