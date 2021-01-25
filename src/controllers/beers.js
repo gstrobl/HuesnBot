@@ -1,35 +1,32 @@
 import { db } from 'controllers/config';
 import { classifyProduct, isEmpty } from 'utils/formatter';
 
-const addBeers = ({ pageContent, groceryStores, brand }) => {
+const addBeers = ({ productData, groceryStore, brand }) => {
   const docRef = db.collection('beers');
 
-  let index = 0;
-  pageContent.map((item) => {
-    const data = JSON.parse(item);
-    let entry = {};
-    if (/.*(f|F)lasche$/.test(data.name)) {
-      entry = {
-        name: data.name,
-        supermarket: groceryStores[index],
-        type: 'bottle',
-        ...classifyProduct(data, brand),
-      };
-    }
-    if (/.*(d|D)ose$/.test(data.name)) {
-      entry = {
-        name: data.name,
-        supermarket: groceryStores[index],
-        type: 'can',
-        ...classifyProduct(data, brand),
-      };
-    }
-    index += 1;
-    if (!isEmpty(entry)) {
-      docRef.add(entry);
-    }
-    return null;
-  });
+  const data = JSON.parse(productData);
+  let entry = {};
+  if (/.*(f|F)lasche$/.test(data.name)) {
+    entry = {
+      name: data.name,
+      supermarket: groceryStore || null,
+      type: 'bottle',
+      ...classifyProduct(data, brand),
+    };
+  }
+  if (/.*(d|D)ose$/.test(data.name)) {
+    entry = {
+      name: data.name,
+      supermarket: groceryStore || null,
+      type: 'can',
+      ...classifyProduct(data, brand),
+    };
+  }
+
+  if (!isEmpty(entry)) {
+    docRef.add(entry);
+  }
+
   return { status: 200 };
 };
 
@@ -55,12 +52,13 @@ const getBeers = async () => {
             (item) =>
               item.shortName === doc.data().shortName &&
               item.productMeasure === doc.data().productMeasure &&
-              item.supermarket === doc.data().supermarket,
+              item.supermarket === doc.data().supermarket
           )
         ) {
           output.push(doc.data());
         }
       });
+      console.log('output', output);
 
       return output;
     })

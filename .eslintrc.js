@@ -1,35 +1,28 @@
 module.exports = {
-  extends: ['airbnb', 'plugin:prettier/recommended', 'prettier/react'],
   env: {
-    browser: true,
-    commonjs: true,
-    es6: true,
-    jest: true,
     node: true,
+  },
+  extends: ['airbnb-base', 'plugin:prettier/recommended'],
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
   },
   settings: {
     'import/resolver': {
       node: {
-        paths: ['.', 'src'],
+        paths: ['src/'],
       },
     },
   },
+  parserOptions: {
+    sourceType: 'module',
+  },
+  parser: '@babel/eslint-parser',
   rules: {
-    'jsx-a11y/href-no-hash': ['off'],
-    'react/jsx-filename-extension': ['warn', { extensions: ['.js', '.jsx'] }],
-    'max-len': [
-      'warn',
-      {
-        code: 100,
-        tabWidth: 2,
-        comments: 100,
-        ignoreComments: false,
-        ignoreTrailingComments: true,
-        ignoreUrls: true,
-        ignoreStrings: true,
-        ignoreTemplateLiterals: true,
-        ignoreRegExpLiterals: true,
-      },
-    ],
+    'prettier/prettier': ['error', {}, { usePrettierrc: true }],
+    'class-methods-use-this': 'off',
+    'no-param-reassign': 'off',
+    camelcase: 'off',
+    'no-unused-vars': ['error', { argsIgnorePattern: 'next' }],
   },
 };

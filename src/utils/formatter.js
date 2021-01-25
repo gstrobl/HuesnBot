@@ -27,13 +27,13 @@ const mesure = (name, brandData) => {
 };
 
 const priceCalcutation = (item) => {
-  const box = /.(k|K)iste/.test(item.name);
+  const box = /.(k|K)iste/.test(item.name) || /.20/.test(item.name);
   return {
     box,
-    lowPrice: item.offers.lowPrice,
-    highPrice: item.offers.highPrice,
+    lowPrice: item.offers?.lowPrice || 0,
+    highPrice: item.offers?.highPrice || 0,
     lowPricePerItem: box ? parseFloat(item.offers.lowPrice / 20).toFixed(2) : item.offers.lowPrice,
-    priceValidUntil: new Date(item.offers.priceValidUntil),
+    priceValidUntil: new Date(item.offers?.priceValidUntil),
   };
 };
 
@@ -52,4 +52,8 @@ const isEmpty = (obj) => {
   return Object.keys(obj).length === 0;
 };
 
-export { isEmpty, classifyProduct, priceCalcutation };
+const getSubstringItem = (text, substringsArray) => {
+  return substringsArray.find((substring) => text.includes(substring));
+};
+
+export { isEmpty, classifyProduct, priceCalcutation, getSubstringItem };

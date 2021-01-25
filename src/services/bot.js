@@ -37,17 +37,15 @@ class Bot {
 
       const message = data.map((item) => {
         const formatMessage = `🍺 ${item.shortName} / ${item.productMeasure} / ${checkType(
-          item.type,
+          item.type
         )} 💵 EUR ${item.lowPricePerItem} 🏪 ${item.supermarket} 📅 gültig bis: ${dayjs(
-          item.priceValidUntil.seconds * 1000,
+          item.priceValidUntil.seconds * 1000
         ).format('DD.MM.YYYY')} \n\n`;
         return formatMessage;
       });
 
       ctx.reply(
-        `Servus ${name || 'Hawara'}! Hier hast du die derzeitigen Angebote: \n ${message.join(
-          ' ',
-        )}`,
+        `Servus ${name || 'Hawara'}! Hier hast du die derzeitigen Angebote: \n ${message.join(' ')}`
       );
       return null;
     });

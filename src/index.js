@@ -2,7 +2,7 @@ import auth from 'http-auth';
 import authConnect from 'http-auth-connect';
 import express from 'express';
 import Bot from 'services/bot';
-import crawler from 'services/crawler';
+import { fetchBeers, fetchPages } from 'services/crawler';
 
 const PORT = process.env.PORT || 3000;
 const SECRETPATH = process.env.SECRET_PATH;
@@ -21,7 +21,8 @@ const statusMonitor = require('express-status-monitor')({ path: '' });
 app.use(statusMonitor.middleware);
 app.get('/status', authConnect(basic), statusMonitor.pageRoute);
 
-app.get('/crawler/:type', crawler.fetchData);
+app.get('/crawler/pages/:type', fetchPages);
+app.get('/crawler/beers/:type', fetchBeers);
 
 bot.init();
 app.use(bot.telegramBot.webhookCallback(`/${SECRETPATH}`));
